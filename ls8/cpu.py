@@ -1,6 +1,9 @@
 """CPU functionality."""
 
-import sys
+import re
+
+
+
 
 class CPU:
     """Main CPU class."""
@@ -10,7 +13,7 @@ class CPU:
         self.ram = [0]*256
         self.reg = [0]*8
         self.PC = 0
-        self.HLT = 0b00000001
+        self.HLT = "0b1"
     def ram_read(self, MAR):
         return self.ram[MAR]
     def ram_write(self, MAR, MDR):
@@ -18,26 +21,29 @@ class CPU:
 
         
 
-    def load(self):
+    def load(self, program):
         """Load a program into memory."""
+    
+        with open(program) as program:
 
-        address = 0
+            address = 0
 
-        # For now, we've just hardcoded a program:
+            for instruction in program:
+                try:
+                    binary = re.search(r'\d{8}', instruction).group()
+                    self.ram[address] = bin(int(binary,2))
+                    address += 1
+                except:
+                    address += 1
+            
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            self.HLT, # HLT
-        ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+
+    def LDI(self):
+        r = input("register number  ")
+        n = input("number that is saved     ")
+        self.reg[int(r)] = int(n)
+        self.PC+=3
         
 
 
@@ -49,7 +55,11 @@ class CPU:
             self.reg[reg_a] += self.reg[reg_b]
 
         elif op == "MULTIPLY":
-            self.reg[reg_a] = self.reg[reg_a] * self.reg[reg_b]
+
+            self.reg[int(reg_a)] = self.reg[int(reg_a)] * self.reg[int(reg_b)]
+
+            self.PC+=3
+
 
         #elif op == "SUB": etc
         else:
@@ -73,25 +83,26 @@ class CPU:
         for i in range(8):
             print(" %02X" % self.reg[i], end='')
 
-        print()
 
-    def run(self):
-        self.load()
+    def run(self, file):
+        self.load(file)
         """Run the CPU."""
         running = True
         while running:
             IR = self.ram_read(self.PC)
 
-            if IR == 0b10000010:
-                self.reg[0] = 8
-                self.PC+=3
+            if IR == "0b10000010":
+                self.LDI()
 
-            elif IR == 0b01000111:
+            elif IR == "0b1000111":
                 print(self.reg[0])
                 self.PC+=2
 
-            elif IR == 10100010:
-                self.alu("MULTIPLY")
+            elif IR == "0b10100010":
+                r1 = input("register number 1  ")
+                r2 = input("register number 2  ")
+
+                self.alu("MULTIPLY", r1, r2)
 
             
             elif IR == self.HLT:
