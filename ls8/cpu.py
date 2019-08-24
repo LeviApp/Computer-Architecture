@@ -47,6 +47,10 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
+
+        elif op == "MULTIPLY":
+            self.reg[reg_a] = self.reg[reg_a] * self.reg[reg_b]
+
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -85,6 +89,9 @@ class CPU:
             elif IR == 0b01000111:
                 print(self.reg[0])
                 self.PC+=2
+
+            elif IR == 10100010:
+                self.alu("MULTIPLY")
 
             
             elif IR == self.HLT:
