@@ -7,7 +7,16 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.ram = [0]*256
+        self.reg = [0]*8
+        self.PC = 0
+        self.HLT = 0b00000001
+    def ram_read(self, MAR):
+        return self.ram[MAR]
+    def ram_write(self, MAR, MDR):
+        self.ram[MAR] = MDR
+
+        
 
     def load(self):
         """Load a program into memory."""
@@ -23,12 +32,14 @@ class CPU:
             0b00001000,
             0b01000111, # PRN R0
             0b00000000,
-            0b00000001, # HLT
+            self.HLT, # HLT
         ]
 
         for instruction in program:
             self.ram[address] = instruction
             address += 1
+        
+
 
 
     def alu(self, op, reg_a, reg_b):
@@ -47,12 +58,12 @@ class CPU:
         """
 
         print(f"TRACE: %02X | %02X %02X %02X |" % (
-            self.pc,
+            self.PC,
             #self.fl,
             #self.ie,
-            self.ram_read(self.pc),
-            self.ram_read(self.pc + 1),
-            self.ram_read(self.pc + 2)
+            self.ram_read(self.PC),
+            self.ram_read(self.PC + 1),
+            self.ram_read(self.PC + 2)
         ), end='')
 
         for i in range(8):
@@ -61,5 +72,22 @@ class CPU:
         print()
 
     def run(self):
+        self.load()
         """Run the CPU."""
-        pass
+        running = True
+        while running:
+            IR = self.ram_read(self.PC)
+
+            if IR == 0b10000010:
+                self.reg[0] = 8
+                self.PC+=3
+
+            elif IR == 0b01000111:
+                print(self.reg[0])
+                self.PC+=2
+
+            
+            elif IR == self.HLT:
+                running = False
+
+
