@@ -104,6 +104,13 @@ class CPU:
 
                 self.alu("MULTIPLY", r1, r2)
 
+            elif IR == "0b1000101":
+                pass
+            
+            elif IR == "0b1000110":
+                pass
+
+
             
             elif IR == self.HLT:
                 running = False
