@@ -4,7 +4,6 @@ import re
 
 
 
-
 class CPU:
     """Main CPU class."""
 
@@ -14,6 +13,7 @@ class CPU:
         self.reg = [0]*8
         self.PC = 0
         self.HLT = "0b1"
+        self.reg[7] = 243
     def ram_read(self, MAR):
         return self.ram[MAR]
     def ram_write(self, MAR, MDR):
@@ -105,10 +105,53 @@ class CPU:
                 self.alu("MULTIPLY", r1, r2)
 
             elif IR == "0b1000101":
-                pass
-            
+
+                SP = self.reg[7]
+                print('SP PUSH', SP)
+                self.reg[7] -= 1
+                print('REG[7] PUSH', self.reg[7])
+
+                address = int(str(self.ram[self.PC + 1]),2)
+                print('ADDRESS PUSH', address)
+
+                value = self.reg[address]
+                print('VALUE PUSH', value)
+
+
+                self.ram[SP] = value
+
+                print('ram[SP] PUSH', self.ram[SP])
+
+                self.PC += 2
+
+                print('PC PUSH', self.PC)
+
+
             elif IR == "0b1000110":
-                pass
+                SP = self.reg[7]
+                print('SP POP', SP)
+
+
+                value = self.ram[SP]
+                print('VALUE POP', value)
+
+
+                address = int(str(self.ram[self.PC + 1]),2)
+                print('ADDRESS POP', address)
+
+
+                self.reg[address] = value
+                self.reg[7] += 1
+                print('REG[7] POP', self.reg[7])
+
+
+                # registers[7] = ( SP + 1 ) % 255
+
+                self.PC += 2
+                print('PC POP', self.PC)
+
+
+
 
 
             
