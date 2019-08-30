@@ -95,7 +95,8 @@ class CPU:
                 self.LDI()
 
             elif IR == "0b1000111":
-                print(self.reg[0])
+                rn = input("Register Number to Print    ")
+                print(self.reg[int(rn)])
                 self.PC+=2
 
             elif IR == "0b10100010":
@@ -105,22 +106,23 @@ class CPU:
                 self.alu("MULTIPLY", r1, r2)
 
             elif IR == "0b1000101":
-
-                SP = self.reg[7]
-                print('SP PUSH', SP)
+                print(self.ram, self.reg)
+                # print('SP PUSH', SP)
                 self.reg[7] -= 1
-                print('REG[7] PUSH', self.reg[7])
+                SP = self.reg[7]
+
+                # print('REG[7] PUSH', self.reg[7])
 
                 address = int(str(self.ram[self.PC + 1]),2)
-                print('ADDRESS PUSH', address)
+                # print('ADDRESS PUSH', address)
 
                 value = self.reg[address]
-                print('VALUE PUSH', value)
+                # print('VALUE PUSH', value)
 
 
                 self.ram[SP] = value
 
-                print('ram[SP] PUSH', self.ram[SP])
+                # print('ram[SP] PUSH', self.ram[SP])
 
                 self.PC += 2
 
@@ -128,27 +130,28 @@ class CPU:
 
 
             elif IR == "0b1000110":
+                print(self.ram, self.reg)
                 SP = self.reg[7]
-                print('SP POP', SP)
+                # print('SP POP', SP)
 
 
                 value = self.ram[SP]
-                print('VALUE POP', value)
+                # print('VALUE POP', value)
 
 
                 address = int(str(self.ram[self.PC + 1]),2)
-                print('ADDRESS POP', address)
+                # print('ADDRESS POP', address)
 
 
                 self.reg[address] = value
                 self.reg[7] += 1
-                print('REG[7] POP', self.reg[7])
+                # print('REG[7] POP', self.reg[7])
 
 
                 # registers[7] = ( SP + 1 ) % 255
 
                 self.PC += 2
-                print('PC POP', self.PC)
+                # print('PC POP', self.PC)
 
 
 
